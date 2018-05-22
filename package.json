@@ -1,6 +1,6 @@
 {
-	"name": "xlocalstorage",
-	"version": "0.0.0-dev.1",
+	"name": "omnistorage",
+	"version": "0.0.0-dev.2",
 	"description": "cross-origin localstorage",
 	"main": "dist",
 	"scripts": {
@@ -12,7 +12,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/chase-moskal/xlocalstorage.git"
+		"url": "git+https://github.com/chase-moskal/omnistorage.git"
 	},
 	"keywords": [
 		"cross-origin",
@@ -21,9 +21,9 @@
 	"author": "Chase Moskal <chasemoskal@gmail.com>",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/chase-moskal/xlocalstorage/issues"
+		"url": "https://github.com/chase-moskal/omnistorage/issues"
 	},
-	"homepage": "https://github.com/chase-moskal/xlocalstorage#readme",
+	"homepage": "https://github.com/chase-moskal/omnistorage#readme",
 	"devDependencies": {
 		"@types/jest": "22.2.3",
 		"http-server": "0.11.1",

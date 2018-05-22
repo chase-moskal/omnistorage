@@ -1,10 +1,10 @@
 
-# xlocalstorage
+# omnistorage
 
 - cross-domain localstorage access
 - using iframe postmessage rpc via [crosscall](https://github.com/chase-moskal/crosscall)
-- **you install the xlocalstorage host html page**  
-	xlocalstorage hostpage provides access to its localstorage
+- **you install the omnistorage host html page**  
+	omnistorage hostpage provides access to its localstorage
 - **then the client can use that host page's localstorage**  
 	even across domains
 
@@ -13,7 +13,7 @@ here's a wacky ascii diagram which outlines some client-host interactions happen
 ```
 
 |---------------|                                       |---------------|
-| XLOCALSTORAGE |                                       | XLOCALSTORAGE |
+|  OMNISTORAGE  |                                       |  OMNISTORAGE  |
 |    CLIENT     |                                       |     HOST      |
 | ............. |                                       | ............. |
 | ............. | // x.getItem("count")                 | ............. |

@@ -2,20 +2,28 @@
 import * as crosscall from "crosscall"
 
 import {
-	XLocalStorage,
-	ClientCallable,
+	OmniStorage,
+	OmniStorageCallable,
 	StorageEventHandler
 } from "./interfaces"
 
-export interface PrepareClientParams
-	extends crosscall.ClientOptions {}
+export interface PrepareClientParams extends crosscall.ClientOptions {
+	CrosscallClient?: typeof crosscall.Client
+}
 
-export async function prepareClient(
-	params: PrepareClientParams
-): Promise<XLocalStorage> {
+export interface PrepareClientReturns<GenericClient> {
+	omniStorage: Promise<OmniStorage>
+	client: GenericClient
+}
 
-	const crosscallClient =
-		new crosscall.Client<ClientCallable>(params)
-
-	return (await crosscallClient.callable).xLocalStorage
+export function prepareClient<GenericClient extends crosscall.Client = crosscall.Client>({
+	CrosscallClient = crosscall.Client,
+	...crosscallOptions
+}: PrepareClientParams): PrepareClientReturns<GenericClient> {
+	const client = new CrosscallClient<OmniStorageCallable>(crosscallOptions)
+	const omniStorage = client.callable.then(callable => callable.omniStorage)
+	return {
+		omniStorage,
+		client: <any>client
+	}
 }

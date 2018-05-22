@@ -2,10 +2,14 @@
 import * as crosscall from "crosscall"
 
 import {
-	XLocalStorage,
-	ClientCallable,
+	OmniStorage,
+	OmniStorageCallable,
 	StorageEventHandler
 } from "./interfaces"
+
+const entries = (obj: {[key: string]: any}) => {
+	
+}
 
 export interface HostCalleeTopicParams {
 	storage: Storage
@@ -19,29 +23,32 @@ export class HostCalleeTopic {
 	}
 
 	async key(index: number): Promise<string> {
-		return
+		return this.storage.key(index)
 	}
 
-	async getItem<T>(key: string): Promise<T> {
-		return
+	async getItem(key: string): Promise<string> {
+		return this.storage.getItem(key)
 	}
 
-	async setItem<T>(key: string, value: T): Promise<void> {
-		return
+	async setItem(key: string, value: string): Promise<void> {
+		return this.storage.setItem(key, value)
 	}
 
 	async removeItem(key: string): Promise<void> {
-		return
+		return this.storage.removeItem(key)
 	}
 
 	async clear(): Promise<void> {
-		return
+		return this.storage.clear()
 	}
 
 	// non standard
 
-	async getAllEntries<T>(): Promise<[string, T][]> {
-		return
+	async getAllEntries(): Promise<[string, string][]> {
+		const entries: [string, string][] = []
+		for (const key of Object.keys(this.storage))
+			entries.push([key, this.storage[key]])
+		return entries
 	}
 
 	async listen(handler: StorageEventHandler): Promise<void> {

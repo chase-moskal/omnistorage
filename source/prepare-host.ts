@@ -1,31 +1,35 @@
 
 import * as crosscall from "crosscall"
 
+import {HostCalleeTopic} from "./host-callee-topic"
 import {
-	XLocalStorage,
-	ClientCallable,
+	OmniStorage,
+	OmniStorageCallable,
+	OmniStorageCallee,
 	StorageEventHandler
 } from "./interfaces"
-
-import {HostCalleeTopic} from "./host-callee-topic"
 
 export interface PrepareHostParams {
 	origin: RegExp
 	storage: Storage
+	CrosscallHost?: typeof crosscall.Host
+	shims?: Partial<crosscall.HostShims>
 }
 
-export async function prepareHost({
+export function prepareHost<gHost extends crosscall.Host = crosscall.Host>({
 	origin,
-	storage
-}: PrepareHostParams): Promise<crosscall.Host> {
-	return new crosscall.Host({
+	storage,
+	CrosscallHost = crosscall.Host,
+	shims = {}
+}: PrepareHostParams): gHost {
+	return <gHost>new CrosscallHost<OmniStorageCallee>({
 		callee: {
-			xLocalStorage: <crosscall.CalleeTopic><any>new HostCalleeTopic({storage})
+			omniStorage: <any>new HostCalleeTopic({storage})
 		},
 		permissions: [{
 			origin,
 			allowed: {
-				localStorage: [
+				omniStorage: [
 					"key",
 					"getItem",
 					"setItem",
@@ -36,6 +40,7 @@ export async function prepareHost({
 					"unlisten"
 				]
 			}
-		}]
+		}],
+		shims
 	})
 }
