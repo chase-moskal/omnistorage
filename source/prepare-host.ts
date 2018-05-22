@@ -11,14 +11,16 @@ import {HostCalleeTopic} from "./host-callee-topic"
 
 export interface PrepareHostParams {
 	origin: RegExp
+	storage: Storage
 }
 
 export async function prepareHost({
-	origin
+	origin,
+	storage
 }: PrepareHostParams): Promise<crosscall.Host> {
 	return new crosscall.Host({
 		callee: {
-			xLocalStorage: new HostCalleeTopic()
+			xLocalStorage: <crosscall.CalleeTopic><any>new HostCalleeTopic({storage})
 		},
 		permissions: [{
 			origin,

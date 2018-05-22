@@ -7,8 +7,16 @@ import {
 	StorageEventHandler
 } from "./interfaces"
 
-export class HostCalleeTopic implements crosscall.CalleeTopic {
-	[method: string]: crosscall.CalleeMethod
+export interface HostCalleeTopicParams {
+	storage: Storage
+}
+
+export class HostCalleeTopic {
+	private readonly storage: Storage
+
+	constructor({storage}: HostCalleeTopicParams) {
+		this.storage = storage
+	}
 
 	async key(index: number): Promise<string> {
 		return

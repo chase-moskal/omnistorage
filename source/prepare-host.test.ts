@@ -1,5 +1,7 @@
 
-describe("xlocalhost host", () => {
+import {prepareHost} from "./prepare-host"
+
+describe("host", () => {
 
 	it("can get and set items", async() => {
 		expect(true).toBeTruthy()
@@ -10,13 +12,6 @@ describe("xlocalhost host", () => {
 	})
 
 	it("fires events when localstorage is changed", async() => {
-		expect(true).toBeTruthy()
-	})
-})
-
-describe("xlocalhost client", () => {
-
-	it("emulates event binding", async() => {
 		expect(true).toBeTruthy()
 	})
 })
