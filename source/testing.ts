@@ -69,7 +69,7 @@ const makeTestHost = async(shims: crosscall.HostShims) => {
 const makeTestClient = async(shims: crosscall.ClientShims) => {
 	const hostOrigin = "https://localhost:8080"
 	const {omniStorage, client} = prepareClient<TestClient>({
-		CrosscallClient: TestClient,
+		CrosscallClient: <any>TestClient,
 		link: `${hostOrigin}/omnistorage-host.html`,
 		hostOrigin,
 		shims

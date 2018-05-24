@@ -1,6 +1,6 @@
 {
 	"name": "omnistorage",
-	"version": "0.0.0-dev.2",
+	"version": "0.0.0-dev.3",
 	"description": "cross-origin localstorage",
 	"main": "dist",
 	"scripts": {
@@ -34,6 +34,6 @@
 		"typescript": "2.8.3"
 	},
 	"dependencies": {
-		"crosscall": "0.0.2"
+		"crosscall": "0.0.3-dev.3"
 	}
 }

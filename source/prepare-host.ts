@@ -17,7 +17,7 @@ export interface PrepareHostParams {
 	shims?: Partial<crosscall.HostShims>
 }
 
-export function prepareHost<gHost extends crosscall.Host = crosscall.Host>({
+export function prepareHost<gHost extends crosscall.Host = crosscall.Host<OmniStorageCallee>>({
 	origin,
 	storage,
 	CrosscallHost = crosscall.Host,
@@ -40,7 +40,8 @@ export function prepareHost<gHost extends crosscall.Host = crosscall.Host>({
 					"listen",
 					"unlisten"
 				]
-			}
+			},
+			allowedEvents: []
 		}],
 		shims
 	})
