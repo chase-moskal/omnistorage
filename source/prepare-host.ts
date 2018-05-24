@@ -1,10 +1,11 @@
 
 import * as crosscall from "crosscall"
 
-import {HostCalleeTopic} from "./host-callee-topic"
+import {HostStorageAdapter} from "./host-storage-adapter"
 import {
 	OmniStorage,
 	OmniStorageCallable,
+	OmniStorageCallableTopic,
 	OmniStorageCallee,
 	StorageEventHandler
 } from "./interfaces"
@@ -24,7 +25,7 @@ export function prepareHost<gHost extends crosscall.Host = crosscall.Host>({
 }: PrepareHostParams): gHost {
 	return <gHost>new CrosscallHost<OmniStorageCallee>({
 		callee: {
-			omniStorage: <any>new HostCalleeTopic({storage})
+			omniStorage: <OmniStorageCallableTopic><any>new HostStorageAdapter({storage})
 		},
 		permissions: [{
 			origin,

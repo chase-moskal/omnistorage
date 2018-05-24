@@ -7,18 +7,10 @@ import {
 	StorageEventHandler
 } from "./interfaces"
 
-const entries = (obj: {[key: string]: any}) => {
-	
-}
-
-export interface HostCalleeTopicParams {
-	storage: Storage
-}
-
-export class HostCalleeTopic {
+export class HostStorageAdapter implements OmniStorage {
 	private readonly storage: Storage
 
-	constructor({storage}: HostCalleeTopicParams) {
+	constructor({storage}: {storage: Storage}) {
 		this.storage = storage
 	}
 
