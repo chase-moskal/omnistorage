@@ -42,12 +42,59 @@ export class HostStorageAdapter implements OmniStorage {
 			entries.push([key, this.storage[key]])
 		return entries
 	}
+}
 
-	async listen(handler: StorageEventHandler): Promise<void> {
-		return
+export interface HostStorageEventMediatorShims {
+	addEventListener<E extends EventListener>(eventName: string, listener: E, useCapture?: boolean): void
+	removeEventListener(eventName: string, listener: EventListener): void
+}
+
+const eventName = "storage"
+const useCapture = false
+
+export interface HostStorageEventMediatorOptions {
+	storage: Storage
+	shims?: HostStorageEventMediatorShims
+}
+
+const makeDefaultShims = (): HostStorageEventMediatorShims => ({
+	addEventListener: window.addEventListener.bind(window),
+	removeEventListener: window.removeEventListener.bind(window)
+})
+
+export class HostStorageEventMediator implements crosscall.HostEventMediator {
+	private readonly storage: Storage
+	private readonly shims: HostStorageEventMediatorShims
+	private readonly domHandlers = new Map<crosscall.Listener, StorageEventHandler>()
+
+	constructor({storage, shims = makeDefaultShims()}: HostStorageEventMediatorOptions) {
+		Object.assign(this, {storage, shims})
 	}
 
-	async unlisten(handler: StorageEventHandler): Promise<void> {
-		return
+	private makeDomHandler(crosscallListener: crosscall.Listener): StorageEventHandler {
+		const domHandler: StorageEventHandler = event => {
+			if (event.storageArea === this.storage) {
+				crosscallListener(event)
+			}
+		}
+		this.domHandlers.set(crosscallListener, domHandler)
+		return domHandler
+	}
+
+	private trashDomHandler(crosscallListener: crosscall.Listener): StorageEventHandler {
+		const domHandler = this.domHandlers.get(crosscallListener)
+		if (!domHandler) throw new Error("could not find dom handler for crosscall listener in host-storage-adapter")
+		this.domHandlers.delete(crosscallListener)
+		return domHandler
+	}
+
+	listen(crosscallListener: crosscall.Listener) {
+		const domHandler = this.makeDomHandler(crosscallListener)
+		this.shims.addEventListener<StorageEventHandler>(eventName, domHandler, useCapture)
+	}
+
+	unlisten(crosscallListener: crosscall.Listener) {
+		const domHandler = this.trashDomHandler(crosscallListener)
+		this.shims.removeEventListener(eventName, domHandler)
 	}
 }

@@ -3,24 +3,15 @@ import * as crosscall from "crosscall"
 import {TestHost, TestClient} from "crosscall/dist/testing"
 
 import {OmniStorage} from "./interfaces"
-import {prepareHost} from "./prepare-host"
-import {prepareClient} from "./prepare-client"
+import {HostStorageEventMediator} from "./host-storage-adapter"
+import {prepareHost, PrepareHostParams, PrepareHostShims} from "./prepare-host"
+import {prepareClient, PrepareClientParams, PrepareClientReturns} from "./prepare-client"
 
 const sleep = async(duration: number) => new Promise((resolve, reject) => {
 	setTimeout(resolve, duration)
 })
 
-const nap = async() => sleep(100)
-
-class StorageShim implements Storage {
-	[key: string]: any
-	get length(): number { return 0 }
-	clear() {}
-	getItem(key: string): string { return "" }
-	key(index: number): string { return "" }
-	removeItem(key: string): void {}
-	setItem(key: string, value: string): void {}
-}
+export const nap = async() => sleep(10)
 
 const makeStorageShim = (): Storage => ({
 	length: <any>jest.fn(),
@@ -31,64 +22,60 @@ const makeStorageShim = (): Storage => ({
 	setItem: <any>jest.fn()
 })
 
-const goodOrigin = "https://localhost:8080"
-const badOrigin = "https://localhost:1111"
+export const goodOrigin = "https://localhost:8080"
+export const badOrigin = "https://localhost:1111"
+export const originRegex = /^https?:\/\/localhost/i
 
-export interface TestShims {
-	host: crosscall.HostShims
-	client: crosscall.ClientShims
+export interface TestParams {
+	host: PrepareHostParams
+	client: PrepareClientParams
 }
 
-export const makeTestShims = (): TestShims => ({
+export const makeTestParams = (): TestParams => ({
 	host: {
-		postMessage: <any>jest.fn(),
-		addEventListener: <any>jest.fn(),
-		removeEventListener: <any>jest.fn()
+		origin: originRegex,
+		storage: makeStorageShim(),
+		shims: {
+			CrosscallHost: TestHost,
+			HostStorageEventMediator: HostStorageEventMediator,
+			crosscallShims: {
+				postMessage: <any>jest.fn(),
+				addEventListener: <any>jest.fn(),
+				removeEventListener: <any>jest.fn()
+			},
+			storageEventShims: {
+				addEventListener: <any>jest.fn(),
+				removeEventListener: <any>jest.fn()
+			}
+		}
 	},
 	client: {
-		createElement: <any>jest.fn(),
-		appendChild: <any>jest.fn(),
-		removeChild: <any>jest.fn(),
-		addEventListener: <any>jest.fn(),
-		removeEventListener: <any>jest.fn(),
-		postMessage: <any>jest.fn()
+		CrosscallClient: <any>TestClient,
+		link: `${goodOrigin}/omnistorage-host.html`,
+		hostOrigin: goodOrigin,
+		shims: {
+			createElement: <any>jest.fn(),
+			appendChild: <any>jest.fn(),
+			removeChild: <any>jest.fn(),
+			addEventListener: <any>jest.fn(),
+			removeEventListener: <any>jest.fn(),
+			postMessage: <any>jest.fn()
+		}
 	}
 })
 
-const makeTestHost = async(shims: crosscall.HostShims) => {
-	const storage = makeStorageShim()
-	const host = prepareHost<TestHost>({
-		origin: /^https?:\/\/localhost/i,
-		storage,
-		CrosscallHost: TestHost,
-		shims
-	})
-	return {host, storage, shims}
-}
-
-const makeTestClient = async(shims: crosscall.ClientShims) => {
-	const hostOrigin = "https://localhost:8080"
-	const {omniStorage, client} = prepareClient<TestClient>({
-		CrosscallClient: <any>TestClient,
-		link: `${hostOrigin}/omnistorage-host.html`,
-		hostOrigin,
-		shims
-	})
-	return {omniStorage, client, shims}
-}
-
-export const makeBridgedSetup = async(shims: TestShims) => {
+export const makeBridgedSetup = async(params: TestParams) => {
 
 	// route host output to client input
-	shims.host.postMessage = jest.fn<typeof window.postMessage>(
+	params.host.shims.crosscallShims.postMessage = jest.fn<typeof window.postMessage>(
 		async(message: crosscall.Message, origin: string) => {
 			await nap()
-			client.testReceiveMessage({message, origin: goodOrigin})
+			client.crosscallClient.testReceiveMessage({message, origin: goodOrigin})
 		}
 	)
 
 	// route client output to host input
-	shims.client.postMessage = jest.fn<typeof window.postMessage>(
+	params.client.shims.postMessage = jest.fn<typeof window.postMessage>(
 		async(message: crosscall.Message, origin: string) => {
 			await nap()
 			host.testReceiveMessage({message, origin: goodOrigin})
@@ -96,7 +83,7 @@ export const makeBridgedSetup = async(shims: TestShims) => {
 	)
 
 	// client created first, the way iframes work
-	const {omniStorage, client} = await makeTestClient(shims.client)
-	const {host, storage} = await makeTestHost(shims.host)
-	return {omniStorage: await omniStorage, client, host, storage}
+	const client = await prepareClient<TestClient>(params.client)
+	const host = await prepareHost<TestHost>(params.host)
+	return {params, client, host}
 }

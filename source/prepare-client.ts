@@ -11,9 +11,15 @@ export interface PrepareClientParams extends crosscall.ClientOptions {
 	CrosscallClient?: typeof crosscall.Client
 }
 
+export interface StorageEventInterface extends crosscall.ClientEventMediator {
+	listen(listener: StorageEventHandler): Promise<void>
+	unlisten(listener: StorageEventHandler): Promise<void>
+}
+
 export interface PrepareClientReturns<GenericClient> {
 	omniStorage: Promise<OmniStorage>
-	client: GenericClient
+	storageEvent: Promise<StorageEventInterface>
+	crosscallClient: GenericClient
 }
 
 export function prepareClient<GenericClient extends crosscall.Client = crosscall.Client>({
@@ -22,8 +28,10 @@ export function prepareClient<GenericClient extends crosscall.Client = crosscall
 }: PrepareClientParams): PrepareClientReturns<GenericClient> {
 	const client = new CrosscallClient<OmniStorageCallable>(crosscallOptions)
 	const omniStorage = client.callable.then(callable => callable.omniStorage)
+	const storageEvent = client.events.then(events => events.storage)
 	return {
 		omniStorage,
-		client: <any>client
+		storageEvent,
+		crosscallClient: <any>client
 	}
 }

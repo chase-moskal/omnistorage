@@ -34,6 +34,6 @@
 		"typescript": "2.8.3"
 	},
 	"dependencies": {
-		"crosscall": "0.0.3-dev.3"
+		"crosscall": "file:../crosscall/crosscall-0.0.3-dev.3.1.tgz"
 	}
 }

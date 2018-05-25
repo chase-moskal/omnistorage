@@ -1,7 +1,12 @@
 
 import * as crosscall from "crosscall"
 
-import {HostStorageAdapter} from "./host-storage-adapter"
+import {
+	HostStorageAdapter,
+	HostStorageEventMediator,
+	HostStorageEventMediatorShims
+} from "./host-storage-adapter"
+
 import {
 	OmniStorage,
 	OmniStorageCallable,
@@ -10,22 +15,36 @@ import {
 	StorageEventHandler
 } from "./interfaces"
 
+export interface PrepareHostShims {
+	CrosscallHost: typeof crosscall.Host
+	HostStorageEventMediator: typeof HostStorageEventMediator
+	crosscallShims: crosscall.HostShims
+	storageEventShims: HostStorageEventMediatorShims
+}
+
 export interface PrepareHostParams {
 	origin: RegExp
 	storage: Storage
-	CrosscallHost?: typeof crosscall.Host
-	shims?: Partial<crosscall.HostShims>
+	shims?: Partial<PrepareHostShims>
 }
 
 export function prepareHost<gHost extends crosscall.Host = crosscall.Host<OmniStorageCallee>>({
 	origin,
 	storage,
-	CrosscallHost = crosscall.Host,
-	shims = {}
+	shims
 }: PrepareHostParams): gHost {
+	const {
+		CrosscallHost,
+		HostStorageEventMediator,
+		crosscallShims,
+		storageEventShims
+	} = shims
 	return <gHost>new CrosscallHost<OmniStorageCallee>({
 		callee: {
 			omniStorage: <OmniStorageCallableTopic><any>new HostStorageAdapter({storage})
+		},
+		events: {
+			storage: new HostStorageEventMediator({storage, shims: storageEventShims})
 		},
 		permissions: [{
 			origin,
@@ -36,13 +55,13 @@ export function prepareHost<gHost extends crosscall.Host = crosscall.Host<OmniSt
 					"setItem",
 					"removeItem",
 					"clear",
-					"getAllEntries",
-					"listen",
-					"unlisten"
+					"getAllEntries"
 				]
 			},
-			allowedEvents: []
+			allowedEvents: [
+				"storage"
+			]
 		}],
-		shims
+		shims: crosscallShims
 	})
 }

@@ -12,8 +12,6 @@ export interface OmniStorage {
 
 	// non standard
 	getAllEntries(): Promise<[string, string][]>
-	listen(handler: StorageEventHandler): Promise<void>
-	unlisten(handler: StorageEventHandler): Promise<void>
 }
 
 export type OmniStorageCallableTopic = OmniStorage & crosscall.CallableTopic
