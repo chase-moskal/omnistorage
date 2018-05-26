@@ -2,8 +2,8 @@
 import * as crosscall from "crosscall"
 
 import {
-	HostStorageAdapter,
-	HostStorageEventMediator,
+	HostStorageAdapter as HostStorageAdapterDefault,
+	HostStorageEventMediator as HostStorageEventMediatorDefault,
 	HostStorageEventMediatorShims
 } from "./host-storage-adapter"
 
@@ -17,7 +17,8 @@ import {
 
 export interface PrepareHostShims {
 	CrosscallHost: typeof crosscall.Host
-	HostStorageEventMediator: typeof HostStorageEventMediator
+	HostStorageAdapter: typeof HostStorageAdapterDefault
+	HostStorageEventMediator: typeof HostStorageEventMediatorDefault
 	crosscallShims: crosscall.HostShims
 	storageEventShims: HostStorageEventMediatorShims
 }
@@ -31,11 +32,12 @@ export interface PrepareHostParams {
 export function prepareHost<gHost extends crosscall.Host = crosscall.Host<OmniStorageCallee>>({
 	origin,
 	storage,
-	shims
+	shims = {}
 }: PrepareHostParams): gHost {
 	const {
-		CrosscallHost,
-		HostStorageEventMediator,
+		CrosscallHost = crosscall.Host,
+		HostStorageAdapter = HostStorageAdapterDefault,
+		HostStorageEventMediator = HostStorageEventMediatorDefault,
 		crosscallShims,
 		storageEventShims
 	} = shims

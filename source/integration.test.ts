@@ -32,7 +32,7 @@ describe("omnistorage host and client", () => {
 		expect((<jest.Mock>storage.getItem).mock.calls[0]).toEqual([key])
 	})
 
-	xit("events work, listeners can be added and removed", async() => {
+	it("can listen, fire, and unlisten to events", async() => {
 		const params = makeTestParams()
 		const {client, host} = await makeBridgedSetup(params)
 
@@ -40,7 +40,7 @@ describe("omnistorage host and client", () => {
 		let result: any
 
 		const storageEvent = await client.storageEvent
-		storageEvent.listen((event: any) => { result = event.alpha })
+		await storageEvent.listen((event: any) => { result = event.alpha })
 		expect((<jest.Mock>params.client.shims.postMessage).mock.calls).toHaveLength(2)
 		expect((<jest.Mock>params.host.shims.storageEventShims.addEventListener).mock.calls).toHaveLength(1)
 

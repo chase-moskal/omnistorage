@@ -11,7 +11,6 @@
 here's a wacky ascii diagram which outlines some client-host interactions happening withing crosscall
 
 ```
-
 |---------------|                                       |---------------|
 |  OMNISTORAGE  |                                       |  OMNISTORAGE  |
 |    CLIENT     |                                       |     HOST      |
@@ -73,3 +72,17 @@ here's a wacky ascii diagram which outlines some client-host interactions happen
 | ............. |       \-----------------------/       | ............. |
 | ............. |                                       | ............. |
 |---------------|                                       |---------------|
+```
+
+## debugging
+
+debug tests
+
+- [visit chrome://inspect](chrome://inspect)
+
+
+- run jest in node debugger
+
+	```
+	npm run build-debug && node --inspect-brk ./node_modules/jest/bin/jest --testPathPattern="integration" --testNamePattern="to events"
+	```
