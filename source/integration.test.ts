@@ -1,13 +1,6 @@
 
-import * as crosscall from "crosscall"
-import {TestHost, TestClient} from "crosscall/dist/testing"
-
-import {prepareHost} from "./prepare-host"
-import {prepareClient} from "./prepare-client"
-
 import {
 	nap,
-	badOrigin,
 	goodOrigin,
 	makeTestParams,
 	makeBridgedSetup

@@ -1,6 +1,11 @@
 
 import * as crosscall from "crosscall"
 
+import {
+	HostStorageAdapter as HostStorageAdapterDefault,
+	HostStorageEventMediator as HostStorageEventMediatorDefault
+} from "./host-storage-adapter"
+
 export type StorageEventHandler = (event: StorageEvent) => void
 
 export interface OmniStorage {
@@ -22,4 +27,32 @@ export interface OmniStorageCallable extends crosscall.Callable {
 
 export interface OmniStorageCallee extends crosscall.Callee {
 	omniStorage: OmniStorageCallableTopic
+}
+
+export interface PrepareHostShims {
+	CrosscallHost: typeof crosscall.Host
+	HostStorageAdapter: typeof HostStorageAdapterDefault
+	HostStorageEventMediator: typeof HostStorageEventMediatorDefault
+	crosscallShims: crosscall.HostShims
+	storageEventShims: HostStorageEventMediatorShims
+}
+
+export interface PrepareHostParams {
+	origin: RegExp
+	storage: Storage
+	shims?: Partial<PrepareHostShims>
+}
+
+export interface HostStorageEventMediatorShims {
+	addEventListener<E extends EventListener>(eventName: string, listener: E, useCapture?: boolean): void
+	removeEventListener(eventName: string, listener: EventListener): void
+}
+
+export interface HostStorageEventMediatorOptions {
+	storage: Storage
+	shims?: HostStorageEventMediatorShims
+}
+
+export interface OmniStorageLocalClientOptions {
+	storage: Storage
 }

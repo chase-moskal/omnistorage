@@ -2,14 +2,14 @@
 import * as crosscall from "crosscall"
 import {TestHost, TestClient} from "crosscall/dist/testing"
 
-import {OmniStorage} from "./interfaces"
+import {prepareHost} from "./prepare-host"
+import {PrepareHostParams} from "./interfaces"
 import {HostStorageEventMediator} from "./host-storage-adapter"
-import {prepareHost, PrepareHostParams, PrepareHostShims} from "./prepare-host"
-import {prepareClient, PrepareClientParams, PrepareClientReturns} from "./prepare-client"
+import {prepareClient, PrepareClientParams} from "./prepare-client"
 
-const sleep = async(duration: number) => new Promise((resolve, reject) => {
-	setTimeout(resolve, duration)
-})
+const sleep = async(duration: number) =>
+	new Promise((resolve) =>
+		setTimeout(resolve, duration))
 
 export const nap = async() => sleep(10)
 

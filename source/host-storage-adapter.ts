@@ -3,8 +3,9 @@ import * as crosscall from "crosscall"
 
 import {
 	OmniStorage,
-	OmniStorageCallable,
-	StorageEventHandler
+	StorageEventHandler,
+	HostStorageEventMediatorOptions,
+	HostStorageEventMediatorShims
 } from "./interfaces"
 
 export class HostStorageAdapter implements OmniStorage {
@@ -44,18 +45,8 @@ export class HostStorageAdapter implements OmniStorage {
 	}
 }
 
-export interface HostStorageEventMediatorShims {
-	addEventListener<E extends EventListener>(eventName: string, listener: E, useCapture?: boolean): void
-	removeEventListener(eventName: string, listener: EventListener): void
-}
-
 const eventName = "storage"
 const useCapture = false
-
-export interface HostStorageEventMediatorOptions {
-	storage: Storage
-	shims?: HostStorageEventMediatorShims
-}
 
 const makeDefaultShims = (): HostStorageEventMediatorShims => ({
 	addEventListener: window.addEventListener.bind(window),
