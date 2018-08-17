@@ -39,7 +39,7 @@ export class HostStorageAdapter implements OmniStorage {
 	async getAllEntries(): Promise<[string, string][]> {
 		const entries: [string, string][] = []
 		for (const key of Object.keys(this.storage))
-			entries.push([key, this.storage[key]])
+			entries.push([key, this.storage.getItem(key)])
 		return entries
 	}
 }

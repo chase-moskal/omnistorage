@@ -8,13 +8,41 @@
 		{
 			"taskName": "install (production build)",
 			"args": ["install", "--silent"],
-			"problemMatcher": ["$tsc"]
+			"problemMatcher": [
+				"$tsc",
+				{
+					"owner": "tsc",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^(TypeScript error): (\\S+)\\((\\d+),(\\d+)\\): (.+)$",
+						"severity": 1,
+						"file": 2,
+						"line": 3,
+						"column": 4,
+						"message": 5
+					}
+				}
+			]
 		},
 		{
 			"taskName": "development build",
 			"isBuildCommand": true,
 			"args": ["run", "build-debug", "--silent"],
-			"problemMatcher": ["$tsc"]
+			"problemMatcher": [
+				"$tsc",
+				{
+					"owner": "tsc",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^(TypeScript error): (\\S+)\\((\\d+),(\\d+)\\): (.+)$",
+						"severity": 1,
+						"file": 2,
+						"line": 3,
+						"column": 4,
+						"message": 5
+					}
+				}
+			]
 		}
 	]
 }
