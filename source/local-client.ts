@@ -1,10 +1,10 @@
 
-import {OmniStorage, OmniStorageLocalClientOptions} from "./interfaces"
+import {OmniStorage, LocalClientOptions} from "./interfaces"
 
-export class OmniStorageLocalClient implements OmniStorage {
+export class LocalClient implements OmniStorage {
 	private readonly storage: Storage
 
-	constructor(options: OmniStorageLocalClientOptions) {
+	constructor(options: LocalClientOptions) {
 		this.storage = options.storage
 	}
 

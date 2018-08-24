@@ -53,6 +53,6 @@ export interface HostStorageEventMediatorOptions {
 	shims?: HostStorageEventMediatorShims
 }
 
-export interface OmniStorageLocalClientOptions {
+export interface LocalClientOptions {
 	storage: Storage
 }
